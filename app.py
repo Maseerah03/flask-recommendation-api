@@ -1,55 +1,48 @@
 import os
-import pandas as pd
 from flask import Flask, request, jsonify
-from flask_cors import CORS  # Allow frontend to call API
 
-# Initialize Flask app
+# Define Flask app
 app = Flask(__name__)
-CORS(app)  # Fix CORS issue
 
-# Ensure CSV is available
-csv_url = "https://raw.githubusercontent.com/Maseerah03/flask-recommendation-api/main/aspect_based_sentiment_analysis.csv"
-csv_path = "aspect_based_sentiment_analysis.csv"
+# Sample product recommendations based on aspects
+product_recommendations = {
+    "battery": ["Samsung Galaxy M51", "iPhone 13 Pro Max", "OnePlus 9"],
+    "design": ["MacBook Air M2", "Dell XPS 13", "HP Spectre x360"],
+    "camera": ["Canon EOS R6", "Nikon Z50", "Sony A7 III"],
+    "performance": ["ASUS ROG Strix", "MacBook Pro M2", "Lenovo Legion 5"],
+    "display": ["Samsung QLED Monitor", "LG OLED TV", "BenQ 4K Monitor"],
+    "gaming": ["Sony PlayStation 5", "Xbox Series X", "Nintendo Switch"],
+    "sound": ["Bose QuietComfort 45", "Sony WH-1000XM4", "JBL Flip 6"],
+    "processor": ["Intel i9 13th Gen", "AMD Ryzen 9 5900X", "Apple M2 Chip"],
+    "storage": ["Samsung 980 Pro SSD", "WD Black NVMe", "Seagate Barracuda HDD"],
+}
 
-if not os.path.exists(csv_path):
-    print("Downloading missing CSV file...")
-    df = pd.read_csv(csv_url)
-    df.to_csv(csv_path, index=False)
+# Function to get product recommendations
+def get_product_recommendations(aspect_list):
+    recommended_products = []
+    for aspect in aspect_list:
+        if aspect in product_recommendations:
+            recommended_products.extend(product_recommendations[aspect])
+    return list(set(recommended_products))  # Remove duplicates
 
-# Load aspect-based sentiment data
-aspect_df = pd.read_csv(csv_path)
-
-# Calculate Sentiment Score
-aspect_df["Sentiment_Score"] = (aspect_df["Positive"] - aspect_df["Negative"]) / (
-    aspect_df["Positive"] + aspect_df["Negative"] + aspect_df["Neutral"] + 0.001
-)
-
-# Sort by sentiment score
-recommended_aspects = aspect_df.sort_values(by="Sentiment_Score", ascending=False)
-
-# Define recommendation function
-def recommend_products(aspect_list, threshold=0.2):
-    filtered_aspects = recommended_aspects[recommended_aspects["Aspect"].isin(aspect_list)]
-    recommended = filtered_aspects[filtered_aspects["Sentiment_Score"] > threshold]
-    return recommended[["Aspect", "Sentiment_Score"]].to_dict(orient="records")
-
-# Flask API endpoint
+# Flask API route
 @app.route("/recommend", methods=["GET"])
 def recommend():
     try:
-        # Get user input (comma-separated aspects)
-        aspects = request.args.get("aspects", "")
+        aspects = request.args.get("aspects", "").lower().strip()
         aspect_list = [a.strip() for a in aspects.split(",")]
 
-        # Get recommendations
-        recommendations = recommend_products(aspect_list)
+        recommended_products = get_product_recommendations(aspect_list)
 
-        return jsonify({"recommended_aspects": recommendations})
+        if not recommended_products:
+            return jsonify({"message": "No matching products found for the given aspect."})
+
+        return jsonify({"recommended_products": recommended_products})
     
     except Exception as e:
         return jsonify({"error": str(e)})
 
 # Run Flask app
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))  # Use environment variable for Render
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=True)
