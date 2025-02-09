@@ -5,23 +5,42 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Recommendation System</title>
     <style>
+        :root {
+            --bg-color: #f4f4f4;
+            --text-color: #333;
+            --box-bg: white;
+            --btn-bg: #007BFF;
+            --btn-hover: #0056b3;
+            --aspect-bg: #e0f7e0;
+        }
+
+        body.dark-mode {
+            --bg-color: #181818;
+            --text-color: #f0f0f0;
+            --box-bg: #282c34;
+            --btn-bg: #ff9800;
+            --btn-hover: #e68900;
+            --aspect-bg: #444;
+        }
+
         body {
             font-family: 'Arial', sans-serif;
             text-align: center;
             margin: 50px;
-            background-color: #f4f4f4;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: 0.3s;
         }
-        h2 {
-            color: #333;
-        }
+
         .container {
             max-width: 600px;
             margin: auto;
             padding: 20px;
-            background: white;
+            background: var(--box-bg);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 10px;
         }
+
         input {
             width: 80%;
             padding: 10px;
@@ -30,45 +49,65 @@
             border: 1px solid #ccc;
             border-radius: 5px;
         }
+
         button {
             padding: 10px 20px;
             font-size: 16px;
-            background-color: #007BFF;
+            background-color: var(--btn-bg);
             color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: 0.3s;
         }
+
         button:hover {
-            background-color: #0056b3;
+            background-color: var(--btn-hover);
         }
+
         .results {
             margin-top: 20px;
             text-align: left;
         }
+
         .aspect {
             font-weight: bold;
             color: green;
             padding: 8px;
-            background: #e0f7e0;
+            background: var(--aspect-bg);
             border-radius: 5px;
             margin: 5px 0;
         }
+
         .loader {
             display: none;
             border: 5px solid #f3f3f3;
-            border-top: 5px solid #007BFF;
+            border-top: 5px solid var(--btn-bg);
             border-radius: 50%;
             width: 40px;
             height: 40px;
             animation: spin 1s linear infinite;
             margin: 10px auto;
         }
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .dark-mode-toggle {
+            margin-top: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--btn-bg);
+        }
+
+        .dark-mode-toggle:hover {
+            color: var(--btn-hover);
+        }
+
         @media (max-width: 600px) {
             input {
                 width: 100%;
@@ -87,6 +126,8 @@
         <div class="loader" id="loader"></div>
 
         <div class="results" id="results"></div>
+
+        <button class="dark-mode-toggle" onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
     </div>
 
     <script>
@@ -124,6 +165,10 @@
                     resultDiv.innerHTML = "<p style='color: red;'>Failed to fetch recommendations. Please try again.</p>";
                     loader.style.display = "none";  // Hide loader
                 });
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark-mode");
         }
     </script>
 
