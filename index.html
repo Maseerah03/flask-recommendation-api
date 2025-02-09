@@ -162,12 +162,12 @@
                 .then(data => {
                     loader.style.display = "none";  // Hide loader
 
-                    if (data.recommended_aspects.length === 0) {
+                    if (!data.recommended_products || data.recommended_products.length === 0) {
                         resultDiv.innerHTML = "<p>No recommendations found.</p>";
                     } else {
-                        resultDiv.innerHTML = "<h3>Recommended Aspects:</h3>";
-                        data.recommended_aspects.forEach(item => {
-                            resultDiv.innerHTML += `<p class="aspect">✔ Recommended Product: ${item}</p>`;;
+                        resultDiv.innerHTML = "<h3>Recommended Products:</h3>";
+                        data.recommended_products.forEach(item => {
+                            resultDiv.innerHTML += `<p class="aspect">✔ ${item}</p>`;
                         });
                     }
                 })
