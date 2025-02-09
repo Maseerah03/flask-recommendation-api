@@ -103,7 +103,7 @@
             resultDiv.innerHTML = "";  // Clear previous results
             loader.style.display = "block";  // Show loader
 
-            const apiUrl = `https://flask-recommendation-api-6.onrender.com//recommend?aspects=${aspects}`;
+            const apiUrl = `https://flask-recommendation-api-6.onrender.com/recommend?aspects=${aspects}`;
             
             fetch(apiUrl)
                 .then(response => response.json())
