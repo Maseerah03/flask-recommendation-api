@@ -1,6 +1,11 @@
 import os
 import pandas as pd
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # Allow frontend to call API
+
+# Initialize Flask app
+app = Flask(__name__)
+CORS(app)  # Fix CORS issue
 
 # Ensure CSV is available
 csv_url = "https://raw.githubusercontent.com/Maseerah03/flask-recommendation-api/main/aspect_based_sentiment_analysis.csv"
@@ -21,9 +26,6 @@ aspect_df["Sentiment_Score"] = (aspect_df["Positive"] - aspect_df["Negative"]) /
 
 # Sort by sentiment score
 recommended_aspects = aspect_df.sort_values(by="Sentiment_Score", ascending=False)
-
-# Flask app setup
-app = Flask(__name__)
 
 # Define recommendation function
 def recommend_products(aspect_list, threshold=0.2):
@@ -47,6 +49,7 @@ def recommend():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-# Run Flask app on Render-compatible settings
+# Run Flask app
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000, debug=True)
+    port = int(os.environ.get("PORT", 10000))  # Use environment variable for Render
+    app.run(host="0.0.0.0", port=port, debug=True)
