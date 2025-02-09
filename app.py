@@ -1,8 +1,10 @@
 import os
 from flask import Flask, request, jsonify
+from flask_cors import CORS  # ? Import CORS
 
 # Define Flask app
 app = Flask(__name__)
+CORS(app)  # ? Fix CORS: Allow frontend to access API
 
 # Sample product recommendations based on aspects
 product_recommendations = {
@@ -45,4 +47,4 @@ def recommend():
 # Run Flask app
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port, debug=True)
+    app.run(host="0.0.0.0", port=port, debug=True)ort, debug=True)
