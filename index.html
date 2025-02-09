@@ -6,19 +6,29 @@
     <title>Product Recommendation System</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             text-align: center;
             margin: 50px;
-            background-color: #f5f5f5;
+            background-color: #f4f4f4;
         }
         h2 {
             color: #333;
         }
+        .container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
         input {
-            width: 50%;
+            width: 80%;
             padding: 10px;
             margin: 10px 0;
             font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
         }
         button {
             padding: 10px 20px;
@@ -26,48 +36,84 @@
             background-color: #007BFF;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
+            transition: 0.3s;
         }
         button:hover {
             background-color: #0056b3;
         }
         .results {
             margin-top: 20px;
+            text-align: left;
         }
         .aspect {
             font-weight: bold;
             color: green;
+            padding: 8px;
+            background: #e0f7e0;
+            border-radius: 5px;
+            margin: 5px 0;
+        }
+        .loader {
+            display: none;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #007BFF;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        @media (max-width: 600px) {
+            input {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
 
-    <h2>Product Recommendation System</h2>
-    <p>Enter product aspects (e.g., battery, design):</p>
-    <input type="text" id="aspectInput" placeholder="Enter aspects...">
-    <button onclick="getRecommendations()">Get Recommendations</button>
+    <div class="container">
+        <h2>Product Recommendation System</h2>
+        <p>Enter product aspects (e.g., battery, design):</p>
+        <input type="text" id="aspectInput" placeholder="Enter aspects...">
+        <button onclick="getRecommendations()">Get Recommendations</button>
+        
+        <div class="loader" id="loader"></div>
 
-    <div class="results" id="results"></div>
+        <div class="results" id="results"></div>
+    </div>
 
     <script>
         function getRecommendations() {
             const aspects = document.getElementById("aspectInput").value;
+            const loader = document.getElementById("loader");
+            const resultDiv = document.getElementById("results");
+
             if (!aspects) {
                 alert("Please enter at least one aspect!");
                 return;
             }
 
-            const apiUrl = "https://flask-recommendation-api-6.onrender.com/recommend?aspects=" + aspects;
+            resultDiv.innerHTML = "";  // Clear previous results
+            loader.style.display = "block";  // Show loader
+
+            const apiUrl = `https://flask-recommendation-api.onrender.com/recommend?aspects=${aspects}`;
             
             fetch(apiUrl)
                 .then(response => response.json())
                 .then(data => {
-                    const resultDiv = document.getElementById("results");
-                    resultDiv.innerHTML = "<h3>Recommended Aspects:</h3>";
+                    loader.style.display = "none";  // Hide loader
 
                     if (data.recommended_aspects.length === 0) {
-                        resultDiv.innerHTML += "<p>No recommendations found.</p>";
+                        resultDiv.innerHTML = "<p>No recommendations found.</p>";
                     } else {
+                        resultDiv.innerHTML = "<h3>Recommended Aspects:</h3>";
                         data.recommended_aspects.forEach(item => {
                             resultDiv.innerHTML += `<p class="aspect">${item.Aspect} - Score: ${item.Sentiment_Score.toFixed(2)}</p>`;
                         });
@@ -75,11 +121,11 @@
                 })
                 .catch(error => {
                     console.error("Error fetching recommendations:", error);
-                    alert("Failed to fetch recommendations. Please try again.");
+                    resultDiv.innerHTML = "<p style='color: red;'>Failed to fetch recommendations. Please try again.</p>";
+                    loader.style.display = "none";  // Hide loader
                 });
         }
     </script>
 
 </body>
 </html>
- 
