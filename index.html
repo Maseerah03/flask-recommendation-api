@@ -167,7 +167,7 @@
                     } else {
                         resultDiv.innerHTML = "<h3>Recommended Aspects:</h3>";
                         data.recommended_aspects.forEach(item => {
-                            resultDiv.innerHTML += `<p class="aspect">${item.Aspect} - Score: ${item.Sentiment_Score.toFixed(2)}</p>`;
+                            resultDiv.innerHTML += `<p class="aspect">✔ Recommended Product: ${item}</p>`;;
                         });
                     }
                 })
