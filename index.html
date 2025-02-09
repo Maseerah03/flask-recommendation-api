@@ -42,12 +42,22 @@
         }
 
         input {
-            width: 80%;
+            width: 75%;
             padding: 10px;
             margin: 10px 0;
             font-size: 16px;
             border: 1px solid #ccc;
             border-radius: 5px;
+        }
+
+        .mic-btn {
+            padding: 10px;
+            font-size: 16px;
+            background-color: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
         }
 
         button {
@@ -121,6 +131,7 @@
         <h2>Product Recommendation System</h2>
         <p>Enter product aspects (e.g., battery, design):</p>
         <input type="text" id="aspectInput" placeholder="Enter aspects...">
+        <button class="mic-btn" onclick="startListening()">🎤</button>
         <button onclick="getRecommendations()">Get Recommendations</button>
         
         <div class="loader" id="loader"></div>
@@ -169,6 +180,18 @@
 
         function toggleDarkMode() {
             document.body.classList.toggle("dark-mode");
+        }
+
+        function startListening() {
+            const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            recognition.lang = "en-US";
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById("aspectInput").value = transcript;
+            };
+
+            recognition.start();
         }
     </script>
 
